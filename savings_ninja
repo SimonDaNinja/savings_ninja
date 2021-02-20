@@ -1,0 +1,59 @@
+#! /usr/bin/python3
+
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+
+def getRootDirectory():
+    return os.path.dirname(os.path.abspath(__file__))
+
+def getAccountDirectory():
+    return "/".join([getRootDirectory(), "accounts"])
+
+def getAccountPath(account):
+    return "/".join([getAccountDirectory(), account])
+
+def getMonthValueArraysForAccount(account):
+    accountPath = getAccountPath(account)
+    lines = open(accountPath, 'r').read().split('\n')
+    while '' in lines:
+        lines.remove('')
+    firstMonth = int(lines.pop(0))
+    values = np.array([float(i) for i in lines])
+    months = np.array([i for i in range(firstMonth, firstMonth + len(values))], dtype=np.int64)
+    return values, months
+
+def plotMonthValues(months, values, label):
+    plt.plot(months, values, '*-', label = label)
+
+if __name__ == "__main__":
+
+    accounts = os.listdir(getAccountDirectory())
+    accountValueDict = {}
+    accountMonthDict = {}
+
+    minMonth = float('inf')
+    maxMonth = 0
+
+    for account in accounts:
+        values, months = getMonthValueArraysForAccount(account)
+        accountValueDict[account] = values
+        accountMonthDict[account] = months
+        plotMonthValues(months, values, account)
+        if months[0] < minMonth:
+            minMonth = months[0]
+        if months[0] + len(months) > maxMonth:
+            maxMonth = months[0] + len(months)
+
+    allMonths = np.array([i for i in range(minMonth,maxMonth)], dtype = np.int64)
+    totalValues = np.zeros(allMonths.shape)
+
+    for account in accounts:
+        values = accountValueDict[account]
+        months = accountMonthDict[account]
+        totalValues[months-minMonth] += values
+
+    plotMonthValues(allMonths, totalValues, 'total')
+
+    plt.legend()
+    plt.show()
