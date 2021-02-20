@@ -23,8 +23,8 @@ def getMonthValueArraysForAccount(account):
     months = np.array([i for i in range(firstMonth, firstMonth + len(values))], dtype=np.int64)
     return values, months
 
-def plotMonthValues(months, values, label):
-    plt.plot(months, values, '*-', label = label)
+def plotMonthValues(months, values, label, symbol = '*-'):
+    plt.plot(months, values, symbol, label = label)
 
 if __name__ == "__main__":
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         months = accountMonthDict[account]
         totalValues[months-minMonth] += values
 
-    plotMonthValues(allMonths, totalValues, 'total')
+    plotMonthValues(allMonths, totalValues, 'total', symbol = '*--')
 
     plt.legend()
     plt.show()
