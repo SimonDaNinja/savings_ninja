@@ -33,7 +33,7 @@ if __name__ == "__main__":
     accountMonthDict = {}
 
     minMonth = float('inf')
-    maxMonth = 0
+    maxMonth = float('-inf')
 
     for account in accounts:
         values, months = getMonthValueArraysForAccount(account)
